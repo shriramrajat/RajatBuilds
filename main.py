@@ -10,7 +10,13 @@ from dotenv import load_dotenv
 load_dotenv()
 
 DATABASE_URL = os.getenv("DATABASE_URL")
-engine = create_async_engine(DATABASE_URL)
+engine = create_async_engine(
+    DATABASE_URL,
+    pool_size=20,         # Realistic concurrent DB connections for local Postgres
+    max_overflow=10,      # Allow 10 extra connections in burst
+    pool_pre_ping=True,   # Health-check connections before using them
+)
+
 AsyncSessionLocal = sessionmaker(engine, class_=AsyncSession, expire_on_commit=False)
 
 app = FastAPI(title="RajatBuilds - Performance Arena")
