@@ -1,6 +1,30 @@
+# Next.js build output
+.next/
+out/
+
+# Dependencies
+node_modules/
+.bin/
+**/.bin/
+
+# Env files
 .env
-__pycache__/
-*.pyc
-*.pyo
-.venv/
-venv/
+.env.local
+.env.production
+.env*.local
+
+# Build output
+dist/
+build/
+
+# Editor
+.vscode/
+.idea/
+
+# OS
+.DS_Store
+Thumbs.db
+
+# Debug logs
+npm-debug.log*
+yarn-debug.log*
