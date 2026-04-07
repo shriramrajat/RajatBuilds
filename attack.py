@@ -12,8 +12,15 @@ import time
 
 load_dotenv()
 
-# Parse the DATABASE_URL from asyncpg format
-RAW_URL = os.getenv("DATABASE_URL").replace("postgresql+asyncpg://", "postgresql://")
+# Parse the DATABASE_URL from SQLAlchemy async format back to raw format for asyncpg
+RAW_URL = os.getenv("DATABASE_URL")
+if not RAW_URL:
+    raise RuntimeError("DATABASE_URL environment variable is not set")
+
+# asyncpg expects postgres:// or postgresql://
+if RAW_URL.startswith("postgresql+asyncpg://"):
+    RAW_URL = RAW_URL.replace("postgresql+asyncpg://", "postgresql://", 1)
+# Some providers use "postgres://" in DATABASE_URL, which is fine for asyncpg
 
 async def apply_index():
     print("=" * 50)
