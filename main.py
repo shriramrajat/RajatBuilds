@@ -21,9 +21,12 @@ DATABASE_URL = os.getenv("DATABASE_URL")
 if not DATABASE_URL:
     raise RuntimeError("DATABASE_URL environment variable is not set")
 
-# Railway provides PostgreSQL URLs with postgres:// — asyncpg needs postgresql+asyncpg://
+# Railway provides PostgreSQL URLs with postgres:// or postgresql://
+# We FORCE it to use our asyncpg driver for asynchronous SQLAlchemy.
 if DATABASE_URL.startswith("postgres://"):
     DATABASE_URL = DATABASE_URL.replace("postgres://", "postgresql+asyncpg://", 1)
+elif DATABASE_URL.startswith("postgresql://"):
+    DATABASE_URL = DATABASE_URL.replace("postgresql://", "postgresql+asyncpg://", 1)
 engine = create_async_engine(
     DATABASE_URL,
     pool_size=20,
