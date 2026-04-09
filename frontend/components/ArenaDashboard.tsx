@@ -238,7 +238,7 @@ export default function ArenaDashboard() {
         >
           Rajat
         </a>
-        {" "} · Phase 2 of 5 · FastAPI + PostgreSQL
+        {" "} · FastAPI + PostgreSQL + Next.js · Phase 4 of 5
       </footer>
     </div>
   );

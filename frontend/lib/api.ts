@@ -1,7 +1,6 @@
 import { TestRequest, TestResult } from "./types";
 
 const API_BASE = (process.env.NEXT_PUBLIC_API_URL || "http://localhost:8000").trim();
-console.log("Performance Arena: Using API at", API_BASE);
 
 export async function runLoadTest(req: TestRequest): Promise<TestResult> {
   const response = await fetch(`${API_BASE}/api/v1/test`, {
