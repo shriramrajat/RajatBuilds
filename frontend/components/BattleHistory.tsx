@@ -8,6 +8,7 @@ interface BattleHistoryProps {
   history: TestResult[];
   baselineIndex?: number | null;
   onPin?: (idx: number) => void;
+  onClear?: () => void;
 }
 
 function LatencyBadge({ ms }: { ms: number }) {
@@ -23,7 +24,7 @@ function LatencyBadge({ ms }: { ms: number }) {
   );
 }
 
-export default function BattleHistory({ history, baselineIndex, onPin }: BattleHistoryProps) {
+export default function BattleHistory({ history, baselineIndex, onPin, onClear }: BattleHistoryProps) {
   if (history.length === 0) return null;
 
   return (
@@ -43,6 +44,15 @@ export default function BattleHistory({ history, baselineIndex, onPin }: BattleH
         >
           {history.length} runs
         </span>
+        {onClear && (
+          <button
+            onClick={onClear}
+            className="text-[9px] px-2 py-0.5 rounded-full tracking-widest uppercase transition-opacity hover:opacity-70"
+            style={{ border: "1px solid rgba(255,51,102,0.3)", color: "#ff6688", background: "rgba(255,51,102,0.05)" }}
+          >
+            CLEAR
+          </button>
+        )}
       </div>
 
       {/* Header row */}

@@ -15,8 +15,18 @@ export default function ArenaDashboard() {
   const [result, setResult] = useState<TestResult | null>(null);
   const [isLoading, setIsLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
-  const [history, setHistory] = useState<TestResult[]>([]);
-  const [baseline, setBaseline] = useState<TestResult | null>(null);
+  const [history, setHistory] = useState<TestResult[]>(() => {
+    try {
+      const saved = localStorage.getItem("arena_history");
+      return saved ? JSON.parse(saved) : [];
+    } catch { return []; }
+  });
+  const [baseline, setBaseline] = useState<TestResult | null>(() => {
+    try {
+      const saved = localStorage.getItem("arena_baseline");
+      return saved ? JSON.parse(saved) : null;
+    } catch { return null; }
+  });
 
   const bossState = getBossState(result);
 
@@ -26,7 +36,11 @@ export default function ArenaDashboard() {
     try {
       const data = await runLoadTest(req);
       setResult(data);
-      setHistory((prev) => [...prev.slice(-9), data]);
+      setHistory((prev) => {
+        const updated = [...prev.slice(-9), data];
+        try { localStorage.setItem("arena_history", JSON.stringify(updated)); } catch {}
+        return updated;
+      });
     } catch (err: any) {
       setError(err.message || "Connection failed. Is the backend running on :8000?");
     } finally {
@@ -35,7 +49,19 @@ export default function ArenaDashboard() {
   };
 
   const handlePinBaseline = () => {
-    if (result) setBaseline(result);
+    if (result) {
+      setBaseline(result);
+      try { localStorage.setItem("arena_baseline", JSON.stringify(result)); } catch {}
+    }
+  };
+
+  const handleClearHistory = () => {
+    setHistory([]);
+    setBaseline(null);
+    try {
+      localStorage.removeItem("arena_history");
+      localStorage.removeItem("arena_baseline");
+    } catch {}
   };
 
   return (
@@ -194,7 +220,11 @@ export default function ArenaDashboard() {
       </AnimatePresence>
 
       {/* ─── BATTLE HISTORY ─── */}
-      <BattleHistory history={history} baselineIndex={baseline ? history.indexOf(baseline) : null} />
+      <BattleHistory
+        history={history}
+        baselineIndex={baseline ? history.indexOf(baseline) : null}
+        onClear={handleClearHistory}
+      />
 
       {/* ─── FOOTER ─── */}
       <footer className="mt-6 text-center text-[10px] tracking-widest" style={{ color: "var(--text-muted)" }}>
